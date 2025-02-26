@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import dj_database_url
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&##!zk!@__m8&0&$x_0!*53o6g1p2-zoy7bfnqhoz7=5kgop-n'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
 
 # Application definition
@@ -74,6 +75,7 @@ WSGI_APPLICATION = 'ai_blog_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+database_url = os.environ.get('DATABASE_URL')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -81,7 +83,9 @@ DATABASES = {
     }
 }
 
+DATABASES['default'] = dj_database_url.parse(database_url)
 
+# postgresql://blog_db_2vd0_user:iNyVODsBb8SnRpbGuLNORtBdu70Rgdn2@dpg-cuvi3k23esus73bqsku0-a.oregon-postgres.render.com/blog_db_2vd0
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
