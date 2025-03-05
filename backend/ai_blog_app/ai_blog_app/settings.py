@@ -26,7 +26,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1 localhost").split()
+
 
 
 # Application definition
@@ -75,19 +76,33 @@ WSGI_APPLICATION = 'ai_blog_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-database_url = os.environ.get('DATABASE_URL')
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# database_url = os.environ.get('DATABASE_URL')
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
-DATABASES['default'] = dj_database_url.parse(database_url)
+# DATABASES['default'] = dj_database_url.parse(database_url)
 
 # postgresql://blog_db_2vd0_user:iNyVODsBb8SnRpbGuLNORtBdu70Rgdn2@dpg-cuvi3k23esus73bqsku0-a.oregon-postgres.render.com/blog_db_2vd0
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url:
+    DATABASES = {
+        'default': dj_database_url.parse(database_url, conn_max_age=600)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
